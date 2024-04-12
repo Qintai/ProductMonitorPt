@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resource\Fonts\digital_display.ttf" />
+    <None Remove="Resource\Fonts\iconfont.ttf" />
+    <None Remove="Resource\Images\device.png" />
+    <None Remove="Resource\Images\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="NModbus4" Version="2.1.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resource\Fonts\digital_display.ttf" />
+    <Resource Include="Resource\Fonts\iconfont.ttf" />
+    <Resource Include="Resource\Images\device.png" />
+    <Resource Include="Resource\Images\Logo.png" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,482 @@
+﻿<UserControl x:Class="ProductMonitorPt.UserControls.MonitorUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mainw="clr-namespace:ProductMonitorPt.ViewModel"
+             
+             d:DataContext="{d:DesignInstance Type=mainw:MainWindowVM,IsDesignTimeCreatable=False}"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:local="clr-namespace:ProductMonitorPt.UserControls" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Height="675" Width="1200">
+    <UserControl.Resources >
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="10,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid>
+                            <!--左上角的线条-->
+                            <Polyline Points="0 30, 0 10, 10 0, 30 0"
+                               Stroke="Red" StrokeThickness="1"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"/>
+
+                            <!--圆  左上角的圆点-->
+                            <Ellipse Width="4" Height="4" Stroke="Aqua" Margin="10,-2"
+                             VerticalAlignment="Top" HorizontalAlignment="Left" />
+
+                            <Ellipse Width="4" Height="4" Stroke="Aqua" Margin="-2,8,0,0"
+       VerticalAlignment="Top" HorizontalAlignment="Left" />
+
+                            <Path HorizontalAlignment="Right" Data="M0 0, 10 0, 70 0, 83 10, 100 10, 110,0,120,0, 127,7, 129,20, 129,80M106,0,50,0"
+                                  Stroke="Yellow" StrokeThickness="1"></Path>
+
+                            <!--上面的线-->
+                            <Border BorderThickness="0,1,0,0" BorderBrush="#9918aabd" VerticalAlignment="top" Margin="30,-0.5,78,0"></Border>
+                            <!--右边的线  时注意是按照左边（顺时针）计算还是按照右边（逆时针）计算-->
+                            <Border BorderThickness="0,0,1,0" BorderBrush="#9918aabd"  HorizontalAlignment="Right" Margin="0,10,0,0"></Border>
+
+                            <!--下面的线-->
+                            <Border BorderThickness="0,0,0,1" BorderBrush="#9918aabd" VerticalAlignment="Bottom" Margin="0,0"></Border>
+
+                            <!--左边的线-->
+                            <Border BorderThickness="1,0,0,0" BorderBrush="#9918aabd"  HorizontalAlignment="Left" Margin="0,15,0,0"></Border>
+
+                            <!--右下角的三角形-->
+                            <Polygon Points="0 7,7 7,7 0" Fill="red" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Polygon>
+
+                            <!--文字前的装饰-->
+                            <Path Data="M0 0,3 0,5 4,3 8,0 8,3 4"   Fill="#9918aabd" Margin="10,13"></Path>
+                            <Path Data="M0 0,3 0,5 4,3 8,0 8,3 4"   Fill="#5518aabd" Margin="16,13"></Path>
+
+                            <TextBlock Text="{TemplateBinding Header}"
+                                       Foreground="White" 
+                                       FontWeight="Bold" Margin="25,8"
+                                       HorizontalAlignment="Left" 
+                                       VerticalAlignment="Top"/>
+
+                            <!--显示内容-->
+                            <ContentPresenter></ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition />
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <!--第一大行，分成2列-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--第一列-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <TextBlock Text="{Binding TimeStr}" Foreground="White" FontSize="30"  VerticalAlignment="Center" 
+                           FontFamily="../resource\fonts\# digital display"/>
+
+                <StackPanel Margin="15,0,0,0">
+                    <TextBlock Text="{Binding DateStr}" Foreground="White" FontSize="10"/>
+                    <TextBlock Text="星期6" Foreground="White" FontSize="10" HorizontalAlignment="Right"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!--第二列-->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <StackPanel.Resources>
+                    <DataTemplate x:Key="machineCount">
+                        <Border Width="15" Background="#3318aabd" Margin="2,0">
+                            <TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="16"></TextBlock>
+                        </Border>
+                    </DataTemplate>
+                </StackPanel.Resources>
+
+                <TextBlock Text="机台&#13;总数" Foreground="#99ffffff" Margin="10,0" VerticalAlignment="Center" FontSize="10"></TextBlock>
+                <!--循环创建控件-->
+                <ItemsControl ItemsSource="{Binding MachineCount}" ItemTemplate="{StaticResource machineCount}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Text="生产&#13;计数" Foreground="#99ffffff" Margin="10,0" VerticalAlignment="Center" FontSize="10"></TextBlock>
+                <!--循环创建控件-->
+                <ItemsControl ItemsSource="{Binding ProductCount}" ItemTemplate="{StaticResource machineCount}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Text="不良&#13;计数" Foreground="#99ffffff" Margin="10,0" VerticalAlignment="Center" FontSize="10"></TextBlock>
+                <!--循环创建控件-->
+                <ItemsControl ItemsSource="{Binding BadCount}" ItemTemplate="{StaticResource machineCount}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
+
+            <!--配置按钮 触发器 渐进色-->
+            <Button Style="{StaticResource BtnStyle}" HorizontalAlignment="Right" Grid.Column="1" Height="35" Width="80" VerticalAlignment="Center"
+                    Margin="20,0"  Content="配置" Tag="&#xe625;" 
+                    Command="{Binding ShowSettingaCmm,RelativeSource={RelativeSource AncestorType=Window}}"></Button>
+        </Grid>
+
+        <!--第二大行，分成3列-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!--第一列-->
+            <UniformGrid Grid.Column="0" Columns="1">
+                <GroupBox Header="环境">
+                    <ItemsControl ItemsSource="{Binding EnviromentList}" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="4"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5">
+                                    <TextBlock Text="{Binding EnItemValue}" FontSize="16" Foreground="#ff2bedf1" Margin="0,5"></TextBlock>
+                                    <TextBlock Text="{Binding EnItemName}" FontSize="10" Foreground="#aaffffff" Margin="0,5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+                <GroupBox Header="产能">
+                    <Grid>
+                        <!--定义X数据-->
+                        <lvc:CartesianChart Margin="20,35,20,5">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Labels="8:00,9:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" StrokeThickness="0"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+
+                            <!--定义Y的数据-->
+                            <lvc:CartesianChart.Series>
+                                <lvc:ColumnSeries Values="300,400,480,450,380,450,450,330,340" Title="生产计数"  MaxColumnWidth="10">
+                                    <!--渐变色-->
+                                    <lvc:ColumnSeries.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#ff3fbbe6" Offset="0"></GradientStop>
+                                            <GradientStop Color="#ff2bedf1" Offset="1"></GradientStop>
+                                        </LinearGradientBrush>
+                                    </lvc:ColumnSeries.Fill>
+                                </lvc:ColumnSeries>
+
+                                <lvc:ColumnSeries Values="15,55,15,40,38,45,56,42,24" Title="不良计数"  MaxColumnWidth="10">
+                                    <!--渐变色-->
+                                    <lvc:ColumnSeries.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#fffb9a9a" Offset="0"></GradientStop>
+                                            <GradientStop Color="#ffff5151" Offset="1"></GradientStop>
+                                        </LinearGradientBrush>
+                                    </lvc:ColumnSeries.Fill>
+                                </lvc:ColumnSeries>
+                            </lvc:CartesianChart.Series>
+
+                            <!--Y数据刻度-->
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis MinValue="0" MaxValue="500" >
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="100" Stroke="#11ffffff"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                            <Border Height="6" Width="6" Background="#ff2bedf1"  Margin="5,0"></Border>
+                            <TextBlock Text="生产计数" FontSize="10" Foreground="#44ffffff"></TextBlock>
+
+                            <Border Height="6" Width="6" Background="#ffff5151"  Margin="5,0"></Border>
+                            <TextBlock Text="不良计数" FontSize="10" Foreground="#44ffffff"></TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="质量">
+                    <Grid>
+                        <lvc:CartesianChart Margin="20,35,20,5">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Labels="1#,2#,3#,4#,5#,6#">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" StrokeThickness="0"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+
+
+                            <!--Y轴-->
+                            <lvc:CartesianChart.Series>
+                                <lvc:LineSeries Values="15,3,4,4,4,3" PointGeometrySize="0" Stroke="#ff2bedf1" Title="生产计数" >
+                                    <!--渐变色-->
+                                    <lvc:LineSeries.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#552bedf1" Offset="0"></GradientStop>
+                                            <GradientStop Color="Transparent" Offset="1"></GradientStop>
+                                        </LinearGradientBrush>
+                                    </lvc:LineSeries.Fill>
+                                </lvc:LineSeries>
+                            </lvc:CartesianChart.Series
+>
+                            <!--Y数据刻度-->
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis MinValue="0" MaxValue="15" >
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="5" Stroke="#11ffffff"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Grid>
+                </GroupBox>
+            </UniformGrid>
+
+            <!--第二列-->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="1.5*"/>
+                </Grid.RowDefinitions>
+                <Image Source="../Resource/Images/device.png" />
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock Text="&#xe68d;" FontFamily="../Resource/Fonts/#iconfont" Foreground="#99ffffff" Margin="5,0"></TextBlock>
+                        <TextBlock Text="报警记录" Foreground="#99ffffff"></TextBlock>
+                    </StackPanel>
+
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding AlarmList}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="23">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Background="IndianRed" Height="6" Width="6" CornerRadius="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Num}" Foreground="#992bedf1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Msg}" Grid.Column="2" VerticalAlignment="Center"  Foreground="#992bedf1"/>
+                                    <TextBlock Text="{Binding Time}" Grid.Column="3" VerticalAlignment="Center"  Foreground="#992bedf1"/>
+                                    <TextBlock Text="{Binding Duration,StringFormat=时长{0}秒}" Grid.Column="4" 
+                                               VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#992bedf1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+
+                <!--第3行  饼图-->
+                <!--第三行-->
+                <GroupBox Grid.Row="2" Header="数据异常报警比例" Margin="0,5,10,0">
+                    <!--饼形图-->
+                    <!--定义数据标签样式-->
+                    <lvc:PieChart InnerRadius="42" Margin="0,30,0,55">
+                        <lvc:PieChart.Resources>
+                            <Style TargetType="lvc:PieSeries">
+                                <Setter Property="DataLabelsTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Point.SeriesView.Title}" Margin="0,0,5,0" Foreground="#44ffffff"></TextBlock>
+                                                <TextBlock Text="{Binding Point.SeriesView.Values[0]}" Foreground="#44ffffff"></TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </lvc:PieChart.Resources>
+                        <!--定义饼形图数据-->
+                        <lvc:PieChart.Series>
+                            <lvc:PieSeries Values="20" Title="压差" StrokeThickness="0" DataLabels="True" LabelPosition="OutsideSlice"></lvc:PieSeries>
+                            <lvc:PieSeries Values="40" Title="振动" StrokeThickness="0" DataLabels="True" LabelPosition="OutsideSlice"></lvc:PieSeries>
+                            <lvc:PieSeries Values="10" Title="设备温度" StrokeThickness="0" DataLabels="True" LabelPosition="OutsideSlice"></lvc:PieSeries>
+                            <lvc:PieSeries Values="30" Title="光照" StrokeThickness="0" DataLabels="True" LabelPosition="OutsideSlice"></lvc:PieSeries>
+                        </lvc:PieChart.Series>
+                    </lvc:PieChart>
+                </GroupBox>
+            </Grid>
+
+            <!--第三列-->
+            <UniformGrid  Grid.Column="2" Columns="1">
+                <GroupBox Header="设备">
+                    <ItemsControl ItemsSource="{Binding DeviceList}" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="4"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5">
+                                    <TextBlock Text="{Binding DeviceItem}" FontSize="12" Foreground="#ff2bedf1" Margin="0,5"></TextBlock>
+                                    <TextBlock Text="{Binding Value}" FontSize="10" Foreground="#aaffffff" Margin="0,5"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+                <GroupBox Header="能耗">
+                    <local:RaderUC ItemSource="{Binding Path=RaderList}" />
+
+                    <!-- 当前是用户控件，无法使用 ContentControl -->
+                    <!-- <ContentControl Grid.Row="1" ItemSource="{Binding RaderList}" Content="{Binding Mycontrol_RaderUC}"/> -->
+                </GroupBox>
+                <GroupBox Header="人力">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="870" FontSize="30" Foreground="#ff2bedf1"></TextBlock>
+                            <TextBlock Text="在职在岗" Foreground="#92a2b0"></TextBlock>
+                        </StackPanel>
+
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="缺岗统计" VerticalAlignment="Center" Foreground="#18aabd"></TextBlock>
+
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding StuffOutWorkList}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="10"/>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="40"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="5" Height="5" CornerRadius="5" Background="#ffe532" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding StuffName}" Grid.Column="1" Foreground="#99ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                            <TextBlock Text="{Binding Position}" Grid.Column="2" Foreground="#99ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+
+                                            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                                <Border Background="#aa2bedf1" Height="3" Width="{Binding ShowWidth}" Margin="5,0"></Border>
+                                                <TextBlock Text="{Binding OutWorkCount}" FontSize="9" Foreground="#99ffffff" VerticalAlignment="Center"></TextBlock>
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
+            </UniformGrid>
+        </Grid>
+
+        <!--<ItemsControl  Grid.Row="2" ItemsSource="{Binding Path=WorkShopList}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Gray" BorderThickness="1" Padding="5">
+                        <TextBlock Text="{Binding}" />
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding WorkShopList}" >
+            <!--ItemsPanelTemplate 元素定义了 ItemsControl 中项的布局方式-->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"></UniformGrid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <!--ItemsControl.ItemTemplate 的作用是定义了每个项在 ItemsControl 中的呈现方式-->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="0,1,0,0" BorderBrush="#9918aabd" Background="#01a8aabd" Margin="10,10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Foreground="#18aabd" Text="{Binding WorkShopName}" Margin="5,8,0,0"/>
+                            <!--<TextBlock Grid.Row="0" Grid.Column="1" Foreground="#18aabd"  Margin="0,8,10,0" Text="详情" HorizontalAlignment="Right"/>-->
+
+<TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0" > 
+    <!-- RelativeSource={RelativeSource AncestorType=Window 就是说这个命令属于上一级窗口里面的-->
+ <Hyperlink Foreground="White" TextDecorations="None" Command="{Binding ShowDetailCmm,RelativeSource={RelativeSource AncestorType=Window}}">[详情]</Hyperlink>
+</TextBlock>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="机台总数" Foreground="#92a2b0"></TextBlock>
+                                <TextBlock Text="{Binding TotalCount}" FontSize="40" Foreground="#ff2bedf1"></TextBlock>
+                            </StackPanel>
+
+                            <UniformGrid  Grid.Row="2" Grid.Column="1">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding WorkingCount}" FontSize="15" Foreground="LightSeaGreen"></TextBlock>
+                                    <TextBlock Text="作业" Foreground="#55ffffff"></TextBlock>
+                                </StackPanel>
+                                
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding WaitCount}" FontSize="15" Foreground="DarkOrange"></TextBlock>
+                                    <TextBlock Text="等待" Foreground="#55ffffff"></TextBlock>
+                                </StackPanel>
+                                
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding WrongCount}" FontSize="15"  Foreground="Red"></TextBlock>
+                                    <TextBlock Text="故障" Foreground="#55ffffff"></TextBlock>
+                                </StackPanel>
+                                
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding StopCount}" FontSize="15" Foreground="Gray"></TextBlock>
+                                    <TextBlock Text="停机" Foreground="#55ffffff"></TextBlock>
+                                </StackPanel>
+                            </UniformGrid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+            
+    </Grid>
+</UserControl>

@@ -1,0 +1,116 @@
+﻿<Window x:Class="ProductMonitorPt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProductMonitorPt"
+        mc:Ignorable="d"  
+        WindowStartupLocation="CenterScreen"
+        Title="生产监控平台" Height="750" Width="1200">
+
+    <!--去掉边框-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0"></WindowChrome>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <!--背景颜色是渐变的 画刷-->
+        <Grid.Background>
+            <!--LinearGradientBrush 由左上角向右下-->
+            <!--<LinearGradientBrush />-->
+
+            <RadialGradientBrush>
+                <!--GradientStop 由里向外-->
+                <GradientStop Color="#ff285173" 
+                 Offset="0" />
+
+                <GradientStop Color="#ff244967" Offset="0.5" />
+
+                <GradientStop Color="#ff14273a" Offset="1" />
+            </RadialGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <!--第一行-头部-->
+        <Border BorderThickness="0,0,0,1"
+                BorderBrush="#5518aadb">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <!--第一列-图片-->
+                <Image Source="Resource/Images/Logo.png" Margin="10,7"/>
+                
+                <!--第2列-->
+                <StackPanel VerticalAlignment="Center" Orientation="Vertical" Grid.Column="1">
+                    <TextBlock Text="生产监控平台" FontSize="16" Foreground="White"/>
+                    <TextBlock Margin="0,2,0,0" Text="阻碍你前行的，其实不是你自己!" FontSize="12" Foreground="White"></TextBlock>
+                </StackPanel>
+
+                <!--第3列-->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="15"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Background="Transparent" 
+                                WindowChrome.IsHitTestVisibleInChrome="True"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <Button Content="&#xe624;" Style="{StaticResource OperateBtnStyle}" Click="BtnMin"/>
+                        <Button Content="&#xe600;" Style="{StaticResource OperateBtnStyle}" Click="BtnMax"/>
+                        <Button Content="&#xe609;" Style="{StaticResource OperateBtnStyle}" Background="DarkRed" Click="BtnClose"/>
+                    </StackPanel>
+
+                    <!--分割线,利用 Border 自定义Border的背景颜色，画刷-->
+                    <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="#5518aabd">
+                        <Border.Background>
+                            <VisualBrush TileMode="FlipXY" Viewport="0,0,7,7" ViewportUnits="Absolute">
+                                <VisualBrush.Visual>
+                                    <Line X1="0" Y1="10" X2="10" Y2="0" Stroke="Gray" StrokeThickness="3"></Line>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Border.Background>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+        <!--第二行-内容部-->
+        <ContentControl Grid.Row="1" Content="{Binding Mycontrol}"/>
+
+        <!--第三行-底部-->
+        <Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="red">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border BorderThickness="0,1,0,0" BorderBrush="#5518aabd">
+                    <Border.Background>
+                        <VisualBrush TileMode="FlipXY" Viewport="0,0,7,7" ViewportUnits="Absolute">
+                            <VisualBrush.Visual>
+                                <Line X1="0" Y1="10" X2="10" Y2="0" Stroke="Gray" StrokeThickness="3"></Line>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Border.Background>
+                </Border>
+
+                <TextBlock Grid.Column="1" Text="生产监控平台 版权所有" Foreground="White" FontSize="15" FontWeight="Bold"></TextBlock>
+
+                <!--<StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="生产监控平台 版权所有" Foreground="White"/>
+                </StackPanel>-->
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
